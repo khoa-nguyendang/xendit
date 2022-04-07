@@ -1,0 +1,104 @@
+version: "3"
+
+services:
+  xendit-server:
+    container_name: xendit-server
+    build: .
+    image: xendit-server:dev
+    restart: always
+    entrypoint: cmd
+    ports:
+      - 3000:3000
+    expose:
+      - 9090
+    depends_on:
+      - redismaster
+      - redisreplica
+      - xendit-mysql
+    networks:
+      - microservice_network
+
+  jaeger:
+    container_name: jaegercontainer
+    restart: always
+    image: jaegertracing/all-in-one:1.21
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
+    networks:
+      - microservice_network
+
+  redismaster:
+    container_name: redismaster
+    restart: always
+    image: redis
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - microservice_network
+
+  redisreplica:
+    container_name: redisreplica
+    restart: always
+    image: redis
+    command: redis-server --slaveof redismaster 6379
+    ports:
+      - 6380:6379
+    expose:
+      - 6380
+    depends_on:
+      - redismaster
+    links:
+      - redismaster
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - microservice_network
+
+  xendit-mysql:
+    container_name: xendit-mysql
+    image: mysql:8
+    restart: always
+    ports:
+      - 13306:3306
+    expose:
+      - 3306
+    volumes:
+      - ./local/mysqldb:/var/lib/mysql
+      - ./docker/mysqlseed:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=Password@123
+      - MYSQL_PASSWORD=Password@123
+      - MYSQL_USER=User
+      - MYSQL_DATABASE=xendit
+    healthcheck:
+      test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD ping
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - microservice_network
+
+networks:
+  microservice_network:
+    driver: bridge
+
+

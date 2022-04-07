@@ -1,0 +1,70 @@
+server:
+  AppVersion: 1.0.0
+  Port: :3000
+  Mode: Development
+  JwtSecretKey: secretkey
+  JwtExpireInHour: 360
+  RefreshSecretKey: refreshSecretKey
+  RefreshTokenExpireInHour: 3600
+  ReadTimeout: 5
+  WriteTimeout: 5
+  SSL: false
+  CtxDefaultTimeout: 12
+  Debug: true
+  MaxConnectionIdle: 5
+  Timeout: 15
+  MaxConnectionAge: 5
+  Time: 120
+  CacheExpiryShort: 600000000000
+  CacheExpiryMedium: 3600000000000
+  CacheExpiryLong: 14400000000000
+  CacheExpiryDayLong: 86400000000000
+  HashKey: 8YivRHLzCmnwXBE7TZIRTt210ju5MnE9
+  PassKey: MehrBgJkXvMxcyLUQPO7zTAb2aWX6bCwPDaU
+  IvKey: MehrBgJkXvMxcyLU
+
+
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: json
+  Level: info
+
+mysql:
+  MysqlHost: xendit-mysql
+  MysqlPort: 3306
+  MysqlUser: User
+  MysqlPassword: Password@123
+  MysqlDbname: xendit
+  MysqlDriver: mysql
+
+
+redis:
+  RedisAddr: redismaster:6379
+  RedisPassword:
+  RedisDb: 0
+  RedisDefaultdb: 0
+  MinIdleConns: 200
+  PoolSize: 12000
+  PoolTimeout: 240
+  Password: ""
+  DB: 0
+
+redisReplica:
+  RedisAddr: redisreplica:6380
+  RedisPassword:
+  RedisDb: 0
+  RedisDefaultdb: 0
+  MinIdleConns: 200
+  PoolSize: 12000
+  PoolTimeout: 240
+  Password: ""
+  DB: 0
+
+
+jaeger:
+  Host: localhost:6831
+  ServiceName: xendit
+  LogSpans: false
+
