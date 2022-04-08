@@ -33,8 +33,8 @@ logger:
 
 mysql:
   MysqlHost: xendit-mysql
-  MysqlPort: 3306
-  MysqlUser: User
+  MysqlPort: 13306
+  MysqlUser: MySqlUser
   MysqlPassword: Password@123
   MysqlDbname: xendit
   MysqlDriver: mysql

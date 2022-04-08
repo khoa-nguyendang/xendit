@@ -22,6 +22,7 @@ func (s *service) RecordTransaction(ctx context.Context, model *vm.TransactionRe
 	// TODO: verify attempt threshold
 
 	// TODO: verify multiple unique cards
+
 	// TODO: verify conducted transaction
 
 	newTransaction, err := s.repository.RecordTransaction(ctx, model)
@@ -153,4 +154,24 @@ func (s *service) TransactionInsert(ctx context.Context, model *vm.TransactionRe
 	}
 
 	return newTransaction.Id, nil
+}
+
+// TODO: verify attempt threshold
+func (s *service) verifyAttemptThreshold(ctx context.Context, model *vm.TransactionRequest) error {
+	return nil
+}
+
+// TODO: verify multiple unique cards
+func (s *service) verifyMultipleUniqueCards(ctx context.Context, model *vm.TransactionRequest) error {
+	return nil
+}
+
+// TODO: verify conducted transaction
+func (s *service) verifyConductedTransaction(ctx context.Context, model *vm.TransactionRequest) error {
+	return nil
+}
+
+func (s *service) markTransactionFailedAttempt(ctx context.Context, model *vm.TransactionRequest) error {
+	// key := utilities.GetFullKey(cs.CKS_CARD_FAILED_ATTEMPT, model.CardID)
+	return nil
 }

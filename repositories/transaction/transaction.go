@@ -16,6 +16,11 @@ func (r *transRepo) RecordTransaction(ctx context.Context, model *vm.Transaction
 	span, ctx := opentracing.StartSpanFromContext(ctx, "TransactionRepository.RecordTransaction")
 	defer span.Finish()
 
+	r.logger.Infof("RecordTransaction:%v", model)
+	if r.db == nil {
+		r.logger.Info("RecordTransaction: Db is nil")
+		return nil, errors.New("DB nil")
+	}
 	// real new transaction
 	newTransaction, err := r.db.ExecContext(ctx, InsertTransactionQuery,
 		model.UserID,
@@ -85,9 +90,11 @@ func (r *transRepo) GetTransaction(ctx context.Context, trans_id string) (*ent.T
 	if err := r.db.QueryRowContext(ctx, GetTransactionByIdQuery, trans_id).Scan(
 		&result.Id,
 		&result.TransactionID,
+		&result.CardID,
 		&result.Created,
 		&result.LastModified,
 		&result.UserID,
+		&result.State,
 		&result.State,
 	); err != nil {
 		r.logger.Errorf("GetTransaction.error: %v", err)

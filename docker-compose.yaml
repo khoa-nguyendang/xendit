@@ -76,17 +76,18 @@ services:
     image: mysql:8
     restart: always
     ports:
-      - 13306:3306
+      - 13306:13306
     expose:
-      - 3306
+      - 13306
     volumes:
       - ./local/mysqldb:/var/lib/mysql
       - ./docker/mysqlseed:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=Password@123
       - MYSQL_PASSWORD=Password@123
-      - MYSQL_USER=User
+      - MYSQL_USER=MySqlUser
       - MYSQL_DATABASE=xendit
+      - MYSQL_TCP_PORT=13306
     healthcheck:
       test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD ping
       interval: 5s

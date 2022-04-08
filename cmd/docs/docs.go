@@ -56,6 +56,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "Record a transaction",
+                "parameters": [
+                    {
+                        "description": "Transactions",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewmodels.TransactionRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -104,6 +115,15 @@ const docTemplate = `{
                         "name": "transaction_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Feedback transaction",
+                        "name": "model",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/viewmodels.TransactionFeedbackRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -118,6 +138,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "viewmodels.TransactionFeedbackRequest": {
+            "type": "object",
+            "properties": {
+                "is_transaction_success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "viewmodels.TransactionRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "card_id": {
+                    "type": "string"
+                },
+                "transaction_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "viewmodels.TransactionResponse": {
             "type": "object",
             "properties": {

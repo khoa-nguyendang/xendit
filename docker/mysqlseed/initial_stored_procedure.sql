@@ -55,3 +55,13 @@ BEGIN
     WHERE  transaction_id = pTransactionId;
 END $$
 delimiter ;
+
+
+delimiter $$
+CREATE PROCEDURE `sp_transactions_get_by_transaction_id` (pTransactionId nvarchar(250))
+BEGIN
+	SELECT id, transaction_id, card_id, created, last_modified, user_id, amount, state
+    FROM transaction_histories
+    WHERE  transaction_id = pTransactionId;
+END $$
+delimiter ;

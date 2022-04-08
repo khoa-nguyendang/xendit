@@ -15,6 +15,8 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/opentracing/opentracing-go"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server interface {
@@ -29,8 +31,6 @@ type server struct {
 	tracer       opentracing.Tracer
 	cfg          *config.Config
 	redisWrite   *redis.Client
-	redisRead    *redis.Client
-	dbRead       *sqlx.DB
 	dbWrite      *sqlx.DB
 	authService  authsv.AuthenticationService
 	transService transv.TransactionService
@@ -91,4 +91,29 @@ func main() {
 	if err := srv.Run(); err != nil {
 		srv.GetLogger().Infof("run got error: %v", err)
 	}
+}
+
+func (s *server) Run() error {
+	// add necessary services
+	s.addLogger()
+	s.addTracer()
+	s.addJwt()
+	s.addRedis()
+	s.addMySQL()
+	s.addAuthenticationService()
+	s.addTransactionService()
+
+	// add apis
+	s.mux.GET(PING, s.Ping)
+	s.mux.POST(TRANSACTION_RECORD, s.TransactionRecordHandler)
+	s.mux.POST(TRANSACTION_FEEDBACK, s.TransactionFeedbackHandler)
+	s.mux.GET(TRANSACTION_GET, s.TransactionGetHandler)
+	s.mux.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	s.logger.Infof("App is listening %v--", s.cfg.Server.Port)
+	return s.mux.Run(s.cfg.Server.Port)
+}
+
+func (s *server) GetLogger() logger.Logger {
+	return s.logger
 }

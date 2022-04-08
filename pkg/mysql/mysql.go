@@ -23,23 +23,23 @@ const (
 
 // Return new Mysql db instance
 func NewMysqlDB(c *config.Config) (*sqlx.DB, error) {
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true&multiStatements=true",
-		c.Mysql.MysqlUser,
+	dataSourceName := fmt.Sprintf("root:%s@tcp(%s:%s)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true&multiStatements=true",
 		c.Mysql.MysqlPassword,
 		c.Mysql.MysqlHost,
 		c.Mysql.MysqlPort,
 		c.Mysql.MysqlDbname,
 	)
 	log.Default().Printf("mysql datasoure: %v", dataSourceName)
+	time.Sleep(3 * time.Second)
 	db, err := sqlx.Connect(c.Mysql.MysqlDriver, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(maxOpenConns)
-	db.SetConnMaxLifetime(connMaxLifetime * time.Second)
-	db.SetMaxIdleConns(maxIdleConns)
-	db.SetConnMaxIdleTime(connMaxIdleTime * time.Second)
+	// db.SetMaxOpenConns(maxOpenConns)
+	// db.SetConnMaxLifetime(connMaxLifetime * time.Second)
+	// db.SetMaxIdleConns(maxIdleConns)
+	// db.SetConnMaxIdleTime(connMaxIdleTime * time.Second)
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}

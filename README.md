@@ -103,6 +103,11 @@ clear
 docker ps
 ```
 
+Step 7. Access swagger
+```
+http://localhost:3000/swagger/index.html
+```
+
 #### Stop current process
 ```
 docker-compose down
@@ -122,5 +127,6 @@ docker exec -it name_of_service_here bash
 
 #### generate swagger
 ```
+cd cmd
 swag init --parseDependency --parseInternal --parseDepth 1 
 ```

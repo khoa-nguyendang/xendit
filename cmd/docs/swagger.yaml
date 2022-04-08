@@ -1,5 +1,21 @@
 basePath: /
 definitions:
+  viewmodels.TransactionFeedbackRequest:
+    properties:
+      is_transaction_success:
+        type: boolean
+    type: object
+  viewmodels.TransactionRequest:
+    properties:
+      amount:
+        type: number
+      card_id:
+        type: string
+      transaction_id:
+        type: string
+      user_id:
+        type: string
+    type: object
   viewmodels.TransactionResponse:
     properties:
       context:
@@ -50,6 +66,13 @@ paths:
       summary: update feedback from payment gateway
   /transactions:
     post:
+      parameters:
+      - description: Transactions
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodels.TransactionRequest'
       produces:
       - application/json
       responses:
@@ -82,6 +105,12 @@ paths:
         name: transaction_id
         required: true
         type: string
+      - description: Feedback transaction
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/viewmodels.TransactionFeedbackRequest'
       produces:
       - application/json
       responses:

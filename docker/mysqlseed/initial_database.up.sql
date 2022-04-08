@@ -16,9 +16,11 @@ CREATE TABLE IF NOT EXISTS transaction_histories
 (
     id              BIGINT(64)      AUTO_INCREMENT,
     transaction_id  VARCHAR(250)    NOT NULL,
+    card_id         VARCHAR(250)    NOT NULL,
     created         BIGINT(64)      NOT NULL,
     last_modified   BIGINT(64)      NOT NULL,
     user_id			VARCHAR(250)	NOT NULL,
+    amount			decimal	        NOT NULL,
     state			SMALLINT(8)	NOT NULL,
     PRIMARY KEY (id)
 );

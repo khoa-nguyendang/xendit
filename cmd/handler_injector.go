@@ -38,14 +38,7 @@ func (s *server) addRedis() {
 		DB:       0,  // use default DB
 	})
 
-	//Redis replica
-	redisReplicas := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6380",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
 	s.redisWrite = redisMasterDb
-	s.redisRead = redisReplicas
 }
 
 func (s *server) addMySQL() {
@@ -85,6 +78,7 @@ func (s *server) addJwt() {
 
 // Clear resource of MySQL, Redis Connection
 func (s *server) ClearResource() {
+	s.logger.Info("Clear Resource triggered")
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(3)
 	go func(dbWrite *sqlx.DB, wg *sync.WaitGroup) {
@@ -97,9 +91,5 @@ func (s *server) ClearResource() {
 		defer wg.Done()
 	}(s.redisWrite, &waitGroup)
 
-	go func(rd *redis.Client, wg *sync.WaitGroup) {
-		_ = rd.Close()
-		defer wg.Done()
-	}(s.redisRead, &waitGroup)
 	waitGroup.Wait()
 }

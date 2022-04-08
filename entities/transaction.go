@@ -7,7 +7,7 @@ type Transaction struct {
 	UserID        string              `json:"user_id"`
 	CardID        string              `json:"card_id"`
 	TransactionID string              `json:"transaction_id"`
-	Amount        int64               `json:"amount"`
+	Amount        float64             `json:"amount"`
 	Created       int64               `json:"created"`
 	LastModified  int64               `json:"last_modified"`
 	State         cs.TransactionState `json:"state"`

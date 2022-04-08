@@ -1,26 +1,36 @@
 package main
 
 import (
-	"xendit/pkg/logger"
-
+	"context"
+	"io/ioutil"
+	"net/http"
 	_ "xendit/view_models/login"
-	_ "xendit/view_models/transaction"
+	vm "xendit/view_models/transaction"
 
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"     // swagger embed files
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 // GetUser godoc
 // @Summary Record a transaction
 // @Produce json
-// @Body {object} viewmodels.TransactionRequest
+// @Param model body viewmodels.TransactionRequest true "Transactions"
 // @Success 200 {object} viewmodels.TransactionResponse
 // @Router /transactions [post]
 func (s *server) TransactionRecordHandler(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "TransactionRecordHandler",
-	})
+	model := &vm.TransactionRequest{}
+	c.BindJSON(model)
+	if model == nil {
+		s.sendBadRequestResponse(c)
+		return
+	}
+
+	response, err := s.transService.RecordTransaction(context.Background(), model)
+	if err != nil {
+		s.logger.Infof("TransactionRecordHandler.err %v, %s", err.Error())
+		s.sendCommonErrorResponse(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 // GetUser godoc
@@ -31,25 +41,41 @@ func (s *server) TransactionRecordHandler(c *gin.Context) {
 // @Router /transactions/{transaction_id} [get]
 func (s *server) TransactionGetHandler(c *gin.Context) {
 	transaction_id := c.Param("transaction_id")
-	c.JSON(200, gin.H{
-		"message":        "TransactionGetHandler",
-		"transaction_id": transaction_id,
-	})
+	if transaction_id == "" {
+		s.sendBadRequestResponse(c)
+		return
+	}
+
+	response, err := s.transService.GetTransaction(context.Background(), transaction_id)
+	if err != nil {
+		s.sendCommonErrorResponse(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 // GetUser godoc
 // @Summary update feedback from payment gateway
 // @Produce json
 // @Param transaction_id path string true "transaction_id"
-// @Body {object} viewmodels.TransactionRequest
+// @Param model body viewmodels.TransactionFeedbackRequest true "Feedback transaction"
 // @Success 200 {object} viewmodels.TransactionResponse
 // @Router /transactions/{transaction_id}/feedback [post]
 func (s *server) TransactionFeedbackHandler(c *gin.Context) {
 	transaction_id := c.Param("transaction_id")
-	c.JSON(200, gin.H{
-		"message":        "TransactionFeedbackHandler",
-		"transaction_id": transaction_id,
-	})
+	model := &vm.TransactionFeedbackRequest{}
+	c.Bind(&model)
+	if model == nil {
+		s.sendBadRequestResponse(c)
+		return
+	}
+
+	response, err := s.transService.FeedbackTransaction(context.Background(), transaction_id, model.IsTransactionSuccess)
+	if err != nil {
+		s.sendCommonErrorResponse(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 // GetUser godoc
@@ -60,32 +86,45 @@ func (s *server) TransactionFeedbackHandler(c *gin.Context) {
 // @Success 200 {object} viewmodels.TransactionResponse
 // @Router /ping [get]
 func (s *server) Ping(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
+	c.JSON(200, "pong")
+}
+
+func (s *server) sendBadRequestResponse(c *gin.Context) {
+	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		// Handle error
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"code":    http.StatusBadRequest,
+		"error":   "BadRequest",
+		"payload": jsonData,
 	})
 }
 
-func (s *server) Run() error {
-	// add necessary services
-	s.addLogger()
-	s.addTracer()
-	s.addJwt()
-	s.addRedis()
-	s.addMySQL()
-	s.addAuthenticationService()
-	s.addTransactionService()
-
-	// add apis
-	s.mux.GET(PING, s.Ping)
-	s.mux.POST(TRANSACTION_RECORD, s.TransactionRecordHandler)
-	s.mux.POST(TRANSACTION_FEEDBACK, s.TransactionFeedbackHandler)
-	s.mux.GET(TRANSACTION_GET, s.TransactionGetHandler)
-	s.mux.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	s.logger.Debugf("App is listening %v--", s.cfg.Server.Port)
-	return s.mux.Run(s.cfg.Server.Port)
+func (s *server) sendForbiddenRequestResponse(c *gin.Context) {
+	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		// Handle error
+	}
+	c.JSON(http.StatusForbidden, gin.H{
+		"code":    http.StatusForbidden,
+		"error":   "StatusForbidden",
+		"payload": jsonData,
+	})
 }
 
-func (s *server) GetLogger() logger.Logger {
-	return s.logger
+func (s *server) sendCommonErrorResponse(c *gin.Context, err error) {
+	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		// Handle error
+	}
+	message := "StatusExpectationFailed"
+	if err != nil {
+		message = err.Error()
+	}
+	c.JSON(http.StatusExpectationFailed, gin.H{
+		"code":    http.StatusExpectationFailed,
+		"error":   message,
+		"payload": jsonData,
+	})
 }
