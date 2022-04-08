@@ -3,15 +3,16 @@ version: "3"
 services:
   xendit-server:
     container_name: xendit-server
-    build: .
+    build:
+      context: .
     image: xendit-server:dev
     restart: always
-    entrypoint: cmd
+    command: cmd
     ports:
       - 3000:3000
+      - 2345:2345   ## THIS PORT IS THE DEBUGGER PORT THAT NEED TO BE EXPOSED.
     depends_on:
       - redismaster
-      - redisreplica
       - xendit-mysql
     networks:
       - microservice_network
@@ -39,30 +40,9 @@ services:
     restart: always
     image: redis
     ports:
-      - 6379:6379
+      - 26379:6379
     expose:
       - 6379
-    healthcheck:
-      test: ["CMD", "redis-cli","ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    networks:
-      - microservice_network
-
-  redisreplica:
-    container_name: redisreplica
-    restart: always
-    image: redis
-    command: redis-server --slaveof redismaster 6379
-    ports:
-      - 6380:6379
-    expose:
-      - 6380
-    depends_on:
-      - redismaster
-    links:
-      - redismaster
     healthcheck:
       test: ["CMD", "redis-cli","ping"]
       interval: 5s

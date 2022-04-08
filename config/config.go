@@ -14,7 +14,6 @@ type Config struct {
 	Mysql                 MysqlConfig
 	MysqlReplica          MysqlConfig
 	Redis                 RedisConfig
-	RedisReplica          RedisConfig
 	Logger                Logger
 	Jaeger                Jaeger
 	AuthenticationService string

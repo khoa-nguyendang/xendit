@@ -97,6 +97,9 @@ func (r *transRepo) GetTransaction(ctx context.Context, trans_id string) (*ent.T
 		&result.State,
 		&result.State,
 	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		r.logger.Errorf("GetTransaction.error: %v", err)
 		return nil, err
 	}

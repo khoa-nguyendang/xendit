@@ -22,21 +22,8 @@ const (
 func NewRedis(c *config.Config) (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     c.Redis.RedisAddr,
-		Password: c.Redis.RedisPassword, // no password set
-		DB:       0,                     // use default DB
+		DB:       0, // use default DB
 		PoolSize: c.Redis.PoolSize,
-	})
-
-	return rdb, nil
-}
-
-// Return new New Redis replicas db instance
-func NewReplicaRedis(c *config.Config) (*redis.Client, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     c.RedisReplica.RedisAddr,
-		Password: c.RedisReplica.RedisPassword, // no password set
-		DB:       0,                            // use default DB
-		PoolSize: c.RedisReplica.PoolSize,
 	})
 
 	return rdb, nil

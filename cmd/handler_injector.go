@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"sync"
+	"time"
 	"xendit/pkg/logger"
 	"xendit/pkg/mysql"
 	"xendit/pkg/trace"
@@ -34,9 +36,22 @@ func (s *server) addRedis() {
 	//Redis
 	redisMasterDb := redis.NewClient(&redis.Options{
 		Addr:     s.cfg.Redis.RedisAddr,
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		DB:       0, // use default DB
+		PoolSize: s.cfg.Redis.PoolSize,
 	})
+	retried := 0
+	for retried < 5 {
+		retried++
+		_, err := redisMasterDb.Set(context.Background(), "test", "test", 5*time.Second).Result()
+		if err == nil {
+			break
+		}
+		time.Sleep(2 * time.Second)
+		s.logger.Errorf("addRedis failed %v", err)
+	}
+	if retried > 5 {
+		s.logger.Errorf("")
+	}
 
 	s.redisWrite = redisMasterDb
 }

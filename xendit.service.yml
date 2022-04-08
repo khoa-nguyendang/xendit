@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xendit-server
+spec:
+  selector:
+    matchLabels:
+      app: xendit-server
+  template:
+    metadata:
+      labels:
+        app: xendit-server
+    spec:
+      containers:
+      - name: xendit-server
+        image: xendit-server
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "1G"
+            cpu: "100m"
+          limits:
+            memory: "2G"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000

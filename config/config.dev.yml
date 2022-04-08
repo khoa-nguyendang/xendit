@@ -48,20 +48,8 @@ redis:
   MinIdleConns: 200
   PoolSize: 12000
   PoolTimeout: 240
-  Password: ""
+  Password:
   DB: 0
-
-redisReplica:
-  RedisAddr: redisreplica:6380
-  RedisPassword:
-  RedisDb: 0
-  RedisDefaultdb: 0
-  MinIdleConns: 200
-  PoolSize: 12000
-  PoolTimeout: 240
-  Password: ""
-  DB: 0
-
 
 jaeger:
   Host: localhost:6831
