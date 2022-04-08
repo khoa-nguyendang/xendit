@@ -1,0 +1,93 @@
+basePath: /
+definitions:
+  viewmodels.TransactionResponse:
+    properties:
+      context:
+        items:
+          type: string
+        type: array
+      created:
+        type: string
+      id:
+        type: string
+      recommendation:
+        type: string
+      request_data: {}
+      transaction_status:
+        type: string
+      updated:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      parameters:
+      - description: transaction_id
+        in: path
+        name: transaction_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.TransactionResponse'
+      summary: update feedback from payment gateway
+  /transactions:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.TransactionResponse'
+      summary: Record a transaction
+  /transactions/{transaction_id}:
+    get:
+      parameters:
+      - description: transaction_id
+        in: path
+        name: transaction_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.TransactionResponse'
+      summary: Retrieves a transaction by transaction_id
+  /transactions/{transaction_id}/feedback:
+    post:
+      parameters:
+      - description: transaction_id
+        in: path
+        name: transaction_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewmodels.TransactionResponse'
+      summary: update feedback from payment gateway
+swagger: "2.0"

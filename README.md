@@ -119,3 +119,8 @@ docker logs name_of_service_here
 docker exec -it name_of_service_here bash
 #example : docker exec transaction-service bash
 ```
+
+#### generate swagger
+```
+swag init --parseDependency --parseInternal --parseDepth 1 
+```

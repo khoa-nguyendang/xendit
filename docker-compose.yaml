@@ -9,8 +9,6 @@ services:
     entrypoint: cmd
     ports:
       - 3000:3000
-    expose:
-      - 9090
     depends_on:
       - redismaster
       - redisreplica

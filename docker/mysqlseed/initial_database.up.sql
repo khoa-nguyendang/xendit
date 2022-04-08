@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS request_histories
     payload         BLOB    NOT NULL,
     response        BLOB    NOT NULL,
     timestamp       BIGINT(64)      NOT NULL,
+    PRIMARY KEY (id)
 );
 
 
