@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
+	"github.com/opentracing-contrib/go-gin/ginhttp"
 	"github.com/opentracing/opentracing-go"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -104,6 +105,7 @@ func (s *server) Run() error {
 	s.addTransactionService()
 
 	// add apis
+	s.mux.Use(ginhttp.Middleware(s.tracer))
 	s.mux.GET(PING, s.Ping)
 	s.mux.POST(TRANSACTION_RECORD, s.TransactionRecordHandler)
 	s.mux.POST(TRANSACTION_FEEDBACK, s.TransactionFeedbackHandler)
